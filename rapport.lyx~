@@ -1,0 +1,755 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass extarticle
+\begin_preamble
+% DO NOT ALTER THIS PREAMBLE!!!
+%
+% This preamble is designed to ensure that the User's Guide prints
+% out as advertised. If you mess with this preamble,
+% parts of the User's Guide may not print out as expected.  If you
+% have problems LaTeXing this file, please contact 
+% the documentation team
+% email: lyx-docs@lists.lyx.org
+
+% the pages of the TOC is numbered roman
+% and a pdf-bookmark for the TOC is added
+\let\myTOC\tableofcontents
+\renewcommand\tableofcontents{%
+  \frontmatter
+  \pdfbookmark[1]{\contentsname}{}
+  \myTOC
+  \mainmatter }
+
+\@ifpackageloaded{babel}{
+ % increase link area for cross-references and autoname them,
+ \AtBeginDocument{\renewcommand{\ref}[1]{\mbox{\autoref{#1}}}}
+ \addto\extrasfrench{%
+  \renewcommand*{\equationautorefname}[1]{}%
+  \renewcommand{\sectionautorefname}{sec.\negthinspace}%
+  \renewcommand{\subsectionautorefname}{sec.\negthinspace}%
+  \renewcommand{\subsubsectionautorefname}{sec.\negthinspace}%
+
+ }
+}{}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language french
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date true
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1.91cm
+\topmargin 2.54cm
+\rightmargin 1.91cm
+\bottommargin 2.54cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style french
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+PFE.
+ Reconstruction de champ de vent.
+\end_layout
+
+\begin_layout Author
+Henri LEROY
+\end_layout
+
+\begin_layout Abstract
+Dans le contexte de l’éolien, la modélisation des champs de vent est un
+ enjeu important pour savoir notamment où placer les éoliennes afin d’optimiser
+ leur productivité.
+ Une problématique commune est alors la reconstruction du champ de vent
+ sur une zone étant donné des mesures ponctuelles de ce dernier.
+ Plusieurs approches sont possibles pour aborder ce problème.
+ Une idée simple consiste à exploiter des méthodes d’interpolation multi-variée.
+ Une autre approche revient à résoudre un problème de minimisation sous
+ contrainte, permettant de prendre en compte les propriétés physiques.
+ Le but de ce PFE est de s’initier aux méthodes numériques pour cette problémati
+que.
+\end_layout
+
+\begin_layout Part
+Récupération & visualisation des données.
+\end_layout
+
+\begin_layout Standard
+Dans un premier temps, l'objectif sera de récupérer des données sur les
+ vents afin d'avoir une base de travail.
+ Nous essayerons également de visualiser ses données afin de se familiariser
+ avec le sujet.
+\end_layout
+
+\begin_layout Section
+Choix de la base de données.
+\end_layout
+
+\begin_layout Subsection
+Variables à considérer
+\end_layout
+
+\begin_layout Standard
+Plusieurs options sont disponibles pour accéder à des données sur les vents.
+ Avant de commencer notre travail, nous devons donc choisir un moyen d'obtenir
+ les données.
+\end_layout
+
+\begin_layout Standard
+Tout d'abord, il est intéressant de réfléchir aux variables à avoir sur
+ les vents pour notre travail.
+ Dans notre cas, 2 valeurs seront nécessaires :
+\end_layout
+
+\begin_layout Enumerate
+La 
+\series bold
+direction 
+\series default
+du vent.
+\end_layout
+
+\begin_layout Enumerate
+La 
+\series bold
+vitesse 
+\series default
+du vent.
+\end_layout
+
+\begin_layout Standard
+Avec ces 2 valeurs, nous pourrons représenter le champ de vecteurs et commencer
+ notre travail d'interpolation.
+ On doit donc trouver une base de données permettant d'accéder à ces champs.
+ De plus, on doit penser au pas de temps et d'espace utilisé.
+ En effet, l'espace sera considéré comme une grille en 2D avec des points
+ espacés d'une certaine longitude et latitude.
+ Un maillage assez fin permettra d'obtenir une simulation plus réaliste.
+ Enfin, les données obtenues devront être espacées d'une certaine durée.
+ Afin d'obtenir l'évolution des vents sur une journée, un mois ou une année,
+ nous devrons avoir l'évolution de ces mesures du vent dans le temps.
+ Bien que cette option ne soit pas indispensable, elle pourrait être intéressant
+e à observer dans le but de trouver le point optimal pour placer une éolienne.
+ Il faudrait considérer l'évolution du vent au cours du temps pour optimiser
+ la position de l'éolienne.
+\end_layout
+
+\begin_layout Subsection
+Choix d'une base de données
+\end_layout
+
+\begin_layout Standard
+Avant d'interpoler nos données, nous devons trouver une source permettant
+ d'obtenir des données réelles ayant les caractéristiques présentées précédemmen
+t.
+\end_layout
+
+\begin_layout Itemize
+Dans un premier temps, j'ai essayé d'utiliser la base de données WRDB (Wind
+ Resource Database) 
+\begin_inset CommandInset href
+LatexCommand href
+target "https://wrdb.nrel.gov"
+
+\end_inset
+
+.
+ Sur cette base de données, on peut obtenir la vitesse et la direction du
+ vent à plusieurs altitudes (de 10m à 160m de hauteur).
+ Ces informations pourront être utiles pour effectuer une interpolation
+ en 3D.
+ On pourra commencer par fixer une altitude avant d'améliorer notre projet
+ en ajoutant une dimension.
+ Pour la localisation géographique, plusieurs pays sont disponibles.
+ Pour commencer, j'ai choisi de travailler sur la zone Ukraine.
+ Cette zone m'a semblé assez pertinente dans la mesure où les données sont
+ disponibles de 2000 à 2022 soit sur une large période de temps.
+ De plus, la résolution spatiale (pas dans l'espace) est de 2km et la résolution
+ temporelle (pas de temps) est de 5min ce qui me paraît assez bas comme
+ valeur.
+ La simulation obtenue pourra donc être réaliste.
+ De plus, la zone étudiée (en bleu sur la figure ci-après) possède un profil
+ topologique varié avec des chaînes montagneuses et la mer Noire ce qui
+ pourrait permettre, d'après moi, une étude plus intéressante des vents.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/zone-ukraine-WRDB.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Définition de la zone géographique étudiée (en bleu).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Cependant, le principal inconvénient de cette base de données réside dans
+ la manière de récupérer les données.
+ En effet, on doit indiquer une latitude et une longitude avant d'obtenir
+ les données en rapport avec ce point.
+ De plus, il faut indiquer une adresse mail ce qui pourrait rendre plus
+ compliqué l'obtention automatique des données.
+ La création du jeu de données entier serait donc assez contraignant ce
+ qui m'a poussé à m'intéresser à d'autres bases de données disponibles.
+ J'ai donc décidé de choisir une autre base de données plus adaptée.
+\end_layout
+
+\begin_layout Itemize
+Par la suite, j'ai donc essayé d'utiliser la base de données de Global Wind
+ Atlas 
+\begin_inset CommandInset href
+LatexCommand href
+target "https://globalwindatlas.info/en/"
+
+\end_inset
+
+.Après avoir réussi à recevoir le fichier de données, j'ai dû le convertir
+ pour passer d'un fichier .tif à un jeu de données compréhensible.
+ Malheureusement, après avoir réussi à convertir ce fichier, je me suis
+ rendu compte que la base de données ne contenait aucune information sur
+ la direction du vent.
+ J'ai donc pu observer la vitesse du vent partout en France pour plusieurs
+ altitudes, sans avoir d'indication sur sa direction.
+ Par conséquent, j'ai dû trouver une autre base de données à exploiter.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/GWA-Speed-FRA-10.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Projection des vitesses de vents en France via Global Wind Atlas.
+ Seule la vitesse des vents est indiquée, on ne peut pas avoir sa direction
+ ce qui limite son utilité dans notre projet.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Après avoir tenté d'utiliser 2 bases de données différentes, en vain, j'ai
+ décidé d'utiliser la base de données stormglass.io 
+\begin_inset CommandInset href
+LatexCommand href
+target "https://stormglass.io/wind-api/"
+
+\end_inset
+
+ possédant plusieurs informations climatiques utiles.
+ Cette API est bien documentée et complète ce qui devrait nous permettre
+ de l'utiliser.
+ L'inconvénient majeur de cette api est le nombre de requêtes disponibles
+ par jour.
+ Dans sa version gratuite, seules 10 requêtes sont autorisées par jour.
+ De plus, cette base de données n'accepte que les requêtes à une latitude
+ et une longitude donnée.
+ Il faudrait donc effectuer plusieurs requêtes pour avoir une vision globale
+ d'un terrain.
+ Cette contrainte nous empêche d'avoir facilement des données.
+ J'ai donc dû poursuivre ma recherche d'une base de données idéale.
+\end_layout
+
+\begin_layout Itemize
+J'ai finalement trouvé une base de données exploitable pour notre projet
+ sur le site 
+\begin_inset CommandInset href
+LatexCommand href
+target "https://open-meteo.com/en/docs/historical-weather-api"
+
+\end_inset
+
+ en exploitant l'API 
+\begin_inset Quotes fld
+\end_inset
+
+Historical Weather
+\begin_inset Quotes frd
+\end_inset
+
+.
+ Cette API me permet d'obtenir la direction et la vitesse du vent (en km/h)
+ à 10m et à 100m d'altitude mais aussi bien d'autres variables (température,
+ humidité...).
+ De plus, on peut obtenir ces informations pour une liste de coordonnées
+ spécifiées ce qui nous permet de quadriller une zone en connaissant sa
+ latitude et sa longitude.
+ On a également une variable temporelle : on obtient les informations demandées
+ pour chaque heure de la journée sur une plage temporelle donnée.
+ On peut également passer une liste de coordonnées en entrée pour obtenir
+ les variables étudiées sur plusieurs points.
+ J'ai donc choisi cette base de données pour ce projet.
+ Toutefois, le nombre de requêtes par jour est limité à 600.
+ Je ne pense pas que cette valeur soit limitante mais il faudra éviter d'effectu
+er des requêtes en boucle pour éviter tout désagrément.
+\end_layout
+
+\begin_layout Section
+Première étude du jeu de données.
+\end_layout
+
+\begin_layout Standard
+Après avoir choisi le jeu de données qui sera étudié dans la première partie
+ de ce projet, nous allons effectuer une première étude afin de se familiariser
+ avec lui.
+ 
+\end_layout
+
+\begin_layout Standard
+Pour commencer, j'ai essayé d'obtenir le champ de vent autour de la Corse.
+ Ce territoire m'a semblé assez pertinent à étudier.
+ On y trouve du relief et la Méditerranée ce qui permet d'obtenir des vents
+ assez forts sur certaines parties de l'île (
+\emph on
+voir partie Climat
+\emph default
+ 
+\begin_inset CommandInset href
+LatexCommand href
+target "https://fr.wikipedia.org/wiki/Corse"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+Le code discuté ci-dessous est fourni.
+ Je vais expliquer les parties les plus importantes du code permettant d'affiche
+r la carte des vents de la Corse.
+\end_layout
+
+\begin_layout Subsection
+Explication du code
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Choix du maillage.
+ 
+\series default
+La zone étudiée sera de 90km de largeur et de 200km de longueur.
+ On va diviser cette zone en 11 segments pour la largeur (soit un pas de
+ ~8km) et en 16 segments pour la longueur (soit un pas de 12.5km).
+ On va donc de 41.5° à 43° par pas de 0.1° pour la latitude et de 8.5° à 9.5°
+ par pas de 0.1.
+ On fera donc la requête de 176 vitesses et 176 directions de vent.
+ Voici le code associé à cette partie.
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+latitudes = np.arange(41.5, 43.02, 0.1) 
+\end_layout
+
+\begin_layout Plain Layout
+
+longitudes = np.arange(8.5, 9.52, 0.1)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Création d'une liste de coordonnées.
+ 
+\series default
+Pour cette partie, j'ai simplement utilisé les fonctions repeat et tile
+ de la bibliothèque numpy.
+ Celles-ci me permettant d'obtenir les 176 couples (latitude, longitude)
+ pour obtenir le maillage souhaité.
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+l_latitudes = np.repeat(latitudes_list, len(longitudes)).tolist()
+\end_layout
+
+\begin_layout Plain Layout
+
+l_longitudes = np.tile(longitudes_list, len(latitudes)).tolist()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Utilisation de l'API et obtention du jeu de données.
+ 
+\series default
+L'API étant très bien documenté, j'ai pu facilement utiliser celle-ci pour
+ obtenir mon jeu de données.
+ Une partie du code étant fournie sur le site, j'ai simplement dû modifier
+ les champs pour la latitude et la longitude afin de donner la liste de
+ latitudes & longitudes.
+ J'obtiens les vitesses et les directions des vents sur chaque point pour
+ chaque heure de la journée du 09/09/2024 (choisi arbitrairement).
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+import requests_cache 
+\end_layout
+
+\begin_layout Plain Layout
+
+import pandas as pd 
+\end_layout
+
+\begin_layout Plain Layout
+
+from retry_requests import retry
+\end_layout
+
+\begin_layout Plain Layout
+
+# Setup the Open-Meteo API client with cache and 
+\end_layout
+
+\begin_layout Plain Layout
+
+#retry on error cache_session = requests_cache.CachedSession('.cache', expire_afte
+r = -1) 
+\end_layout
+
+\begin_layout Plain Layout
+
+retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2) 
+\end_layout
+
+\begin_layout Plain Layout
+
+openmeteo = openmeteo_requests.Client(session = retry_session)
+\end_layout
+
+\begin_layout Plain Layout
+
+# Make sure all required weather variables are listed here 
+\end_layout
+
+\begin_layout Plain Layout
+
+# The order of variables in hourly or daily is important to assign them
+ correctly below 
+\end_layout
+
+\begin_layout Plain Layout
+
+url = "https://archive-api.open-meteo.com/v1/archive" 
+\end_layout
+
+\begin_layout Plain Layout
+
+params = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	"latitude": l_latitudes,
+\end_layout
+
+\begin_layout Plain Layout
+
+	"longitude": l_longitudes,
+\end_layout
+
+\begin_layout Plain Layout
+
+	"start_date": "2024-09-09",
+\end_layout
+
+\begin_layout Plain Layout
+
+	"end_date": "2024-09-09",
+\end_layout
+
+\begin_layout Plain Layout
+
+	"hourly": ["wind_speed_10m", "wind_direction_10m"] }
+\end_layout
+
+\begin_layout Plain Layout
+
+responses = openmeteo.weather_api(url, params=params)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Extraction des données à 0h00.
+ 
+\series default
+Après avoir obtenu toutes les données, j'ai décidé d'essayer d'afficher
+ le champ de vent pour la première heure du jeu de données soit 0h00.
+ Pour chaque couple (latitude, longitude), j'ai extrait la direction et
+ la vitesse du vent.
+ Je suis ensuite passé des coordonnées polaires aux coordonnées cartésiennes
+ en convertissant la vitesse et la direction en coordonnées d'un vecteur
+ de cette manière : 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+wind_direction_radians = np.deg2rad(wind_dir_tmp)
+\end_layout
+
+\begin_layout Plain Layout
+
+wind_data.at[i, 'u'] = wind_spd_tmp * np.cos(wind_direction_radians)
+\end_layout
+
+\begin_layout Plain Layout
+
+wind_data.at[i, 'v'] = wind_spd_tmp * np.sin(wind_direction_radians)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Création de la carte.
+ 
+\series default
+Enfin, après avoir obtenu nos données, on les affiche en utilisant les librairie
+s cartopy et matplotlib.
+ J'affiche les vecteurs sous la forme de quiver (flèche représentant les
+ vecteurs).
+ J'obtiens la figure di-dessous via le code suivant : 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+# Création de la carte 
+\end_layout
+
+\begin_layout Plain Layout
+
+plt.figure(figsize=(10, 8)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+ax = plt.axes(projection=ccrs.Mercator())
+\end_layout
+
+\begin_layout Plain Layout
+
+# Tracer les contours de la Corse 
+\end_layout
+
+\begin_layout Plain Layout
+
+ax.coastlines() 
+\end_layout
+
+\begin_layout Plain Layout
+
+ax.set_extent([8.25, 9.6, 41.2, 43.1], crs=ccrs.PlateCarree()) 
+\end_layout
+
+\begin_layout Plain Layout
+
+ax.set_title("Direction et vitesse du vent à l'heure 0")
+\end_layout
+
+\begin_layout Plain Layout
+
+ax.quiver(wind_data['lon'], wind_data['lat'], wind_data['u'], wind_data['v'],
+ scale=100,
+\end_layout
+
+\begin_layout Plain Layout
+
+transform=ccrs.PlateCarree(), color='r')
+\end_layout
+
+\begin_layout Plain Layout
+
+plt.show()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/corsica_v1.png
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Champ de vents en Corse le 09/09/2024 à 0h00.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

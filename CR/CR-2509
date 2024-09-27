@@ -1,0 +1,56 @@
+Points à aborder:
+1. Comment interpoler en 2D > 2D ? 
+Faire 2D > composante u puis 2D > composante v ?
+Faire 1D Lagrange ? (latitude fixée puis u), faire varier latitude et refaire pareil pour v?
+
+2. Comment faire un système de mécanique des fluides pour créer des champs de vents ? 
+Librairie pour résoudre des EDP? > Fipy ?
+chp vent edp
+1. ecoulemt potentiel : gentil 2 prop  (sur periode de tps où vent aux bords inchangé
+-- Divergence nulle (physique > incompressible logique) div(v) = 0 somme dpartielle = 0
+-- irrotationnel
+rot(v) = 0 > pas de tourbillon
+pot matriciel div et v
+v = grad(P) thm décompo Helmholtz
+div(v) = 0 <> div(gradP) = 0 > laplacien(p) = 0
+Domaine omega. Trouver chp de vent > trouver P vérifiant -laplacien(P) = 0 dans omega & grad(P).normale = v-normale sur bord. Mal posé car plusieurs solutions avec constante (s'annule pour grad)
+Pour fixer une solution on impose P= 0 dans omega
+On résoud l'EDP. COmparer données réelles > Vérifier que vent réel irrationnel à div nulle
+différence finie > OK élément fini chaud
+Ou Librairie.
+Connaître donnée dans dommaine Trouver P tq -lapP = 0 tq on minimimise sum^N_i=1(grad(P) - v)^2
+2. Ecoulement de Stokes.
+v est à div nulle.
+pas besoin hypothèse rotationnelle
+-lapl(v) + nu gradP = 0
+div(v) = 0
+nu : viscosité de l'air à trouver
+On a besoin de v sur bord omega.
+Libraire EF particulier?
+
+Si obstacle au milieu 
+Vitesse nulle sur bord d'obstacle donc on ajoute un bord.
+v = 0 trop fort > dérivée tangencielle ou dérivée normale = 0 grad(n) = 0
+
+3.Ecoulement de Navier-Stokes.
+dérivée temporelle? - (v.P)v - viscosité grad v = 0
+                                        friction
+ Principe fondamental de la dynamique.
+ en temporel. EN stationnaire ? > on retire dérivée temporelle
+div v= 0 + Condition limite
+Dérivée particulaire de v Dtv
+
+3. Thèse si temps.
+Objectif ? 
+Peur de 3 ans sur un sujet ? Hyperspécialisation ? Choisir LE bon sujet ?
+
+interp + comparer avec vrai 
+grille cartésienne 
+
+lagrange nul pour >10pts > splines (np.spline scipy)
+
+paraview vtk docu???? view lacher de particule
+
+
+Si je reduis nb points d'infos > QUest ce que ça va me donner comme interpolant. Comparer avec réelles. 
+Comparer avec physique.
