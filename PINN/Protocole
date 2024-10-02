@@ -1,0 +1,41 @@
+ML process :
+
+1. Decide on problem
+What are we modeling
+
+Why need ML?
+Learning new physics 
+Capture Expensive Physics > Surrogate modeling / > Fast & accurate / > automatic differentiation for optimization
+Capturing multi physics interactions
+update data with new data
+
+2. Curate data
+What data will inform the model ?
+Rotate reshape. 
+Infinite amounts of data > easy to find relation with all data for everywhere
+Find the right angle. Heliocentrisme easy to learn =/= geocentric view
+
+3. Design architecture. As easy as possible
+RNN, autoencoder, DMD, SINDy
+
+SINDy > Ajout de contraintes sur la simplicité du modèle.
+Turbulent fluid flowsn, 
+DL NN + DL allowing invariance to transformation, Ling, Kurzawski, Templeton, JFM
+Inductive biases
+
+4. Craft a loss function
+What models are "Good"?
+PINN standard DFeed forward NN, space time input output field. New metrics add norm, d/dt, d/dx, grad. Add regularizing loss term
+Raissi, Perdikaris, Karniadakis
+
+5. Employ Optimization
+What algorithms to train model ?
+Enforce physic. Add suggestions that we want physic to be satisfied.
+Fluid flow : symetry, energy conserved. Add contraints to model error. Contraints least square
+
+PI ML. Embed physics
+
+Data-driven Science and engineering
+AI institue in dynamic systems
+
+

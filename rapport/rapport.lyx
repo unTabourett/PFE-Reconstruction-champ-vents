@@ -250,7 +250,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename figures/zone-ukraine-WRDB.png
+	filename /home/hleroy/Documents/INSA/PFE/figures/zone-ukraine-WRDB.png
 	scale 50
 
 \end_inset
@@ -308,18 +308,14 @@ target "https://globalwindatlas.info/en/"
 placement H
 wide false
 sideways false
-status collapsed
-
-\begin_layout Plain Layout
-
-\end_layout
+status open
 
 \begin_layout Plain Layout
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename figures/GWA-Speed-FRA-10.png
+	filename /home/hleroy/Documents/INSA/PFE/figures/GWA-Speed-FRA-10.png
 	scale 50
 
 \end_inset
@@ -729,7 +725,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename figures/corsica_v1.png
+	filename /home/hleroy/Documents/INSA/PFE/figures/corsica_v1.png
 	scale 60
 
 \end_inset
@@ -762,6 +758,156 @@ Afin d'obtenir un jeu de données exploitable, on pourrait également faire
  Cette approche aura l'avantage de pouvoir être utilisée en local.
  Grâce aux modèles de mécanique des fluides, on pourrait simuler un champ
  de vecteurs réaliste pouvant être exploité.
+\end_layout
+
+\begin_layout Paragraph
+Compte rendu Réunion 25/09.
+\end_layout
+
+\begin_layout Standard
+Points à aborder :
+\end_layout
+
+\begin_layout Itemize
+Comment interpoler de 2D (coordonnées 
+\begin_inset Formula $(x,y)$
+\end_inset
+
+) vers 2D (vecteur vent 
+\begin_inset Formula $(u,v)$
+\end_inset
+
+)? On va d'abord chercher à interpoler 
+\begin_inset Formula $u$
+\end_inset
+
+ pour tout point 
+\begin_inset Formula $(x,y)$
+\end_inset
+
+ de la grille en fixant un 
+\begin_inset Formula $v$
+\end_inset
+
+.
+ On fera ensuite la même chose avec 
+\begin_inset Formula $v$
+\end_inset
+
+ en fixant 
+\begin_inset Formula $u$
+\end_inset
+
+.
+ On pourra enfin reformer les vecteurs de vents interpolés.
+\end_layout
+
+\begin_layout Itemize
+Comment utiliser un système de mécanique des fluides pour créer des champs
+ de vents réalistes ? 2 méthodes :
+\end_layout
+
+\begin_layout Enumerate
+Les 
+\emph on
+écoulements potentiels.
+\begin_inset space ~
+\end_inset
+
+
+\emph default
+La manière la plus simple de modéliser les vents.
+ Dans ce modèle, le champ de vents 
+\begin_inset Formula $\overrightarrow{v}$
+\end_inset
+
+ respectent 2 propriétés : la 
+\emph on
+divergence nulle
+\emph default
+ soit 
+\begin_inset Formula $div(\overrightarrow{v})=\overrightarrow{\nabla}\cdot\overrightarrow{v}=0$
+\end_inset
+
+ (cohérent car l'air est un fluide incompressible) et l'
+\emph on
+irrotationnalité 
+\emph default
+soit 
+\begin_inset Formula $\nabla\land v=0$
+\end_inset
+
+ (il n'y a pas de tourbillons).
+ 
+\emph on
+\bar under
+Rappel.
+
+\emph default
+\bar default
+ 
+\begin_inset Formula $\nabla=(\frac{\partial}{\partial x},\frac{\partial}{\partial y},\frac{\partial}{\partial z})$
+\end_inset
+
+.
+ En 3D, 
+\begin_inset Formula $\overrightarrow{\nabla}\cdot\overrightarrow{v}=\frac{\partial v_{x}}{\partial x}+\frac{\partial v_{y}}{\partial y}+\frac{\partial v_{z}}{\partial z}$
+\end_inset
+
+ et 
+\begin_inset Formula $\nabla\land v=(\frac{\partial v_{z}}{\partial y}-\frac{\partial v_{y}}{\partial z},\frac{\partial v_{x}}{\partial z}-\frac{\partial v_{z}}{\partial x},\frac{\partial v_{y}}{\partial x}-\frac{\partial v_{x}}{\partial y})$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+Dans 
+\begin_inset Formula $\mathbb{R}^{3}$
+\end_inset
+
+ et sous les hypothèses du théorème de Helmholtz-Hodge, si un champ 
+\begin_inset Formula $\overrightarrow{v}$
+\end_inset
+
+ est 
+\emph on
+irrotationnel
+\emph default
+, alors il existe un champ scalaire 
+\begin_inset Formula $\psi$
+\end_inset
+
+ tel que 
+\begin_inset Formula $\overrightarrow{v}=-\overrightarrow{\nabla}\psi$
+\end_inset
+
+.
+ On a donc, pour un champ à 
+\emph on
+divergence nulle
+\emph default
+, 
+\begin_inset Formula 
+\[
+div(\overrightarrow{v})=div(-\overrightarrow{\nabla}\psi)=
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "*"
+options "bibtotoc,plain"
+
+\end_inset
+
+
 \end_layout
 
 \end_body

@@ -1,0 +1,4 @@
+Je me suis rendu compte que cette méthode avait été remplacée par plusieurs nouvelles méthodes plus rapides. J'ai donc décidé d'utiliser une de ces nouvelles méthodes : RectBivariateSpline.
+Celle-ci est particulièrement adaptée aux données sous la forme d'une grille. En utilisant un maillage rectangulaire, on peut obtenir les données interpolées,https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RectBivariateSpline.html
+https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.interpolate.interp2d.html#scipy.interpolate.interp2d
+https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.interpolate.RectBivariateSpline.html#scipy.interpolate.RectBivariateSpline

@@ -10,7 +10,7 @@ chp vent edp
 -- Divergence nulle (physique > incompressible logique) div(v) = 0 somme dpartielle = 0
 -- irrotationnel
 rot(v) = 0 > pas de tourbillon
-pot matriciel div et v
+pot matriciel div et v.0
 v = grad(P) thm décompo Helmholtz
 div(v) = 0 <> div(gradP) = 0 > laplacien(p) = 0
 Domaine omega. Trouver chp de vent > trouver P vérifiant -laplacien(P) = 0 dans omega & grad(P).normale = v-normale sur bord. Mal posé car plusieurs solutions avec constante (s'annule pour grad)
