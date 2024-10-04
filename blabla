@@ -2,3 +2,9 @@ Je me suis rendu compte que cette méthode avait été remplacée par plusieurs 
 Celle-ci est particulièrement adaptée aux données sous la forme d'une grille. En utilisant un maillage rectangulaire, on peut obtenir les données interpolées,https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RectBivariateSpline.html
 https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.interpolate.interp2d.html#scipy.interpolate.interp2d
 https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.interpolate.RectBivariateSpline.html#scipy.interpolate.RectBivariateSpline
+
+
+
+
+Plutôt que u, v 
+Speed direction plus logique ? > vent + en + fort ou qui tourne mais pas u > ou v >
