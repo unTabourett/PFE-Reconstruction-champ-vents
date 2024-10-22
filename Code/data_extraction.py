@@ -34,7 +34,8 @@ def extract_data_from_resp(response, wind_data, nb_coord): #Sort un dataframe av
     
         hourl_df = pd.DataFrame(data = hourl_data)
         #print(hourl_df)
-        wind_data.at[i, "date"] = hourl_data["date"][0]
+        #print(wind_data.dtypes)
+        wind_data.at[i, "date"] = pd.to_datetime(hourl_data["date"][0])
         wind_data.at[i, "spd10"] = hourl_data["spd10"][0]
         wind_data.at[i, "dir10"] = hourl_data["dir10"][0]
         wind_data.at[i, "spd100"] = hourl_data["spd100"][0]
@@ -42,11 +43,10 @@ def extract_data_from_resp(response, wind_data, nb_coord): #Sort un dataframe av
         #print(wind_data)
     return wind_data
 
-def extract_data_from_api(lat_min, lat_max, lon_min, lon_max, pas, start_d, end_d):
-    #dates au format "AAAA-MM-JJ"
-                          
-    latitudes = np.arange(lat_min, lat_max, pas)
-    longitudes = np.arange(lon_min, lon_max, pas)
+def extract_data_from_api(lat_min, lat_max, lon_min, lon_max, pas_lat, pas_lon, start_d, end_d):
+    #dates au format "AAAA-MM-JJ"   
+    latitudes = np.arange(lat_min, lat_max, pas_lat)
+    longitudes = np.arange(lon_min, lon_max, pas_lon)
     
     latitudes_list = latitudes.round(3).tolist()
     longitudes_list = longitudes.round(3).tolist()
@@ -72,11 +72,14 @@ def extract_data_from_api(lat_min, lat_max, lon_min, lon_max, pas, start_d, end_
     } #On demande les infos toutes les 6h. Cela renvoie donc 16x4 = 64 valeurs par jour
     responses = openmeteo.weather_api(url, params=params)
     
-    wind_data = pd.DataFrame({'lat': l_latitudes, 'lon': l_longitudes, 'date' : '2024-09-09 00:00:00+00:00' ,'spd10': 0.0, 'spd100': 0.0,'dir10':0.0, 'dir100':0.0})
-
-    extract_data_from_resp(responses, wind_data, len(l_latitudes))
+    wind_data = pd.DataFrame({'lat': l_latitudes, 'lon': l_longitudes, 'date' : pd.to_datetime("2024-09-09 00:00:00+00:00") ,'spd10': 0.0, 'spd100': 0.0,'dir10':0.0, 'dir100':0.0})
     
-    return wind_data
+    wind_data = extract_data_from_resp(responses, wind_data, len(l_latitudes))
+    if len(l_latitudes) < 100: #Pour le tri dans l'évolution des erreurs
+        wind_data.to_csv("../data/API/df0"+str(len(l_latitudes))+"_"+str(pas_lat)+"_"+str(pas_lon)+".csv", index=False)
+    else:
+        wind_data.to_csv("../data/API/df"+str(len(l_latitudes))+"_"+str(pas_lat)+"_"+str(pas_lon)+".csv", index=False)
+    #return wind_data
 
 def preprocess_wind_data(data):
     data['u10'] = -data['spd10'] * np.sin(np.radians(data['dir10']))

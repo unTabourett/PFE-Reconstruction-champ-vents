@@ -1,5 +1,7 @@
+# data_interp_Spline.py
+
 from scipy.interpolate import RectBivariateSpline
-from error_interpolation import create_test_dataset, error_interp
+from error_interpolation import create_test_dataset, error_interp_df
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -25,29 +27,26 @@ def plot_interp(u_interpolated,v_interpolated, lat_interp, lon_interp, altitude)
     plt.tight_layout()
     plt.show()
 
-def interpSplineLibrary(data, altitude, pas_interp) :
-    min_lat, max_lat, min_lon, max_lon = min(data['lat']), max(data['lat']), min(data['lon']), max(data['lon'])
-    latitudes = np.unique(data['lat'])
-    longitudes = np.unique(data['lon'])
-    
-    latitudes_interp = np.arange(min_lat, max_lat, pas_interp)
-    longitudes_interp = np.arange(min_lon, max_lon, pas_interp)
-    
-    wind_data_u_grid = np.empty([len(latitudes), len(longitudes)], dtype = float)
-    wind_data_u_grid[:] = data['u'+str(altitude)].values[:data.size].reshape((len(latitudes),len(longitudes)))
-    
-    wind_data_v_grid = np.empty([len(latitudes), len(longitudes)], dtype = float)
-    wind_data_v_grid[:] = data['v'+str(altitude)].values[:data.size].reshape((len(latitudes),len(longitudes)))
-    
-    test_u_interp = RectBivariateSpline(latitudes,longitudes,wind_data_u_grid, bbox=[min_lat, max_lat, min_lon, max_lon])
-    test_v_interp = RectBivariateSpline(latitudes,longitudes,wind_data_v_grid, bbox=[min_lat, max_lat, min_lon, max_lon])
+def interpSplineLibrary(data, altitude, pas_interp, UnSeulDataset) :
+	min_lat, max_lat, min_lon, max_lon = min(data['lat']), max(data['lat']), min(data['lon']), max(data['lon'])
+	latitudes = np.unique(data['lat'])
+	longitudes = np.unique(data['lon'])
 
-    u_interpolated = test_u_interp(latitudes_interp, longitudes_interp)
-    v_interpolated = test_v_interp(latitudes_interp, longitudes_interp)
+	latitudes_interp = np.arange(min_lat, max_lat, pas_interp)
+	longitudes_interp = np.arange(min_lon, max_lon, pas_interp)
 
-    plot_interp(u_interpolated, v_interpolated, latitudes_interp, longitudes_interp, altitude)
+	wind_data_u_grid = np.empty([len(latitudes), len(longitudes)], dtype = float)
+	wind_data_u_grid[:] = data['u'+str(altitude)].values[:data.size].reshape((len(latitudes),len(longitudes)))
 
-    nb_points_test = 100
-    df_test = create_test_dataset(nb_points_test, min_lat, max_lat, min_lon, max_lon, "2024-09-09", "2024-09-09", test_u_interp, test_v_interp)
-    errorAbs, errorCar = error_interp(nb_points_test, altitude, df_test, test_u_interp, test_v_interp)
-    return errorAbs, errorCar 
+	wind_data_v_grid = np.empty([len(latitudes), len(longitudes)], dtype = float)
+	wind_data_v_grid[:] = data['v'+str(altitude)].values[:data.size].reshape((len(latitudes),len(longitudes)))
+
+	test_u_interp = RectBivariateSpline(latitudes,longitudes,wind_data_u_grid, bbox=[min_lat, max_lat, min_lon, max_lon])
+	test_v_interp = RectBivariateSpline(latitudes,longitudes,wind_data_v_grid, bbox=[min_lat, max_lat, min_lon, max_lon])
+
+	u_interpolated = test_u_interp(latitudes_interp, longitudes_interp)
+	v_interpolated = test_v_interp(latitudes_interp, longitudes_interp)
+	if (UnSeulDataset):
+		plot_interp(u_interpolated, v_interpolated, latitudes_interp, longitudes_interp, altitude)
+	return test_u_interp, test_v_interp
+	
